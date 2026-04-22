@@ -1,0 +1,58 @@
+appId: ${APP_ID}
+env:
+  PATH_FOLDER_REPORT: ./reports
+onFlowStart:
+  - runScript:
+      file: ../../../../configs/onflowstart/onflowstart.js
+      env:
+        JIRA_ISSUE: ${JIRA_ISSUE}
+  - runScript:
+      file: get-balance.js
+      env:
+        BALANCE_STATE: ${BALANCE_STATE}
+onFlowComplete:
+  - runScript: ../../../../configs/onflowend/onflowend.js
+
+runFlow:
+  - label: 01 - Klik menu transfer dari home screen
+    commands:
+      - runFlow:
+          label: 02 - Pengguna akan diarahkan ke transfer landing page dan pengguna dapat melihat informasi; 1. Header dengan nama menu Transfer 2. Button Penerima Baru, Diri Sendiri, Grup Baru 3. Terdapat tombol bintang, yang dapat digunakan untuk add favorite (jika sudah ada transaksi yang tersimpan) 4. Tab Saved 5. Tab Last
+          commands:
+            - waitForAnimationToEnd
+            - takeScreenshot: ${output.PATH_FOLDER_REPORT}/01_TC_CHG_TRF_17_001
+  - label: 03 - Pengguna memilih Penerima Baru
+    commands:
+      - runFlow:
+          label: 04 - Pengguna akan masuk ke halaman Transfer ke penerima baru ; 1. Terdapat Tab Rekening dan Tab No.HP / Email 2. By default Tab Rekening; -field nama bank - field noor rekening -field info bisa transfer ke rekening mata uang asing 3. Button lanjut disable
+          commands:
+            - waitForAnimationToEnd
+            - takeScreenshot: ${output.PATH_FOLDER_REPORT}/02_TC_CHG_TRF_17_001
+  - label: 05 - Pengguna klik chevron pada card Nama bank
+    commands:
+      - runFlow:
+          label: 06 - Akan menampilkan list pilih bank
+          commands:
+            - waitForAnimationToEnd
+            - takeScreenshot: ${output.PATH_FOLDER_REPORT}/03_TC_CHG_TRF_17_001
+  - label: 07 - Pilih bank BCA
+    commands:
+      - runFlow:
+          label: 08 - 1. kembali ke halaman Transfer ke penerima baru dan fied nama bank berubah menjadi BCA 2. button Lanjut disable
+          commands:
+            - waitForAnimationToEnd
+            - takeScreenshot: ${output.PATH_FOLDER_REPORT}/04_TC_CHG_TRF_17_001
+  - label: 09 - pengguna input nomor rekening
+    commands:
+      - runFlow:
+          label: 10 - Berhasil input nomor rekening dan button lanjut enable
+          commands:
+            - waitForAnimationToEnd
+            - takeScreenshot: ${output.PATH_FOLDER_REPORT}/05_TC_CHG_TRF_17_001
+  - label: 11 - Pengguna klik button lanjut
+    commands:
+      - runFlow:
+          label: 12 - masuk ke halaman Gather screen
+          commands:
+            - waitForAnimationToEnd
+            - takeScreenshot: ${output.PATH_FOLDER_REPORT}/06_TC_CHG_TRF_17_001

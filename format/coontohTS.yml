@@ -1,0 +1,126 @@
+appId: ${APP_ID}
+jsEngine: graaljs
+
+tags:
+  - regression
+env:
+  JIRA_FOLDER_NAME: Enhancement Limit
+
+onFlowStart:
+  - runScript:
+      file: ../../../automation-env.js
+  - runScript:
+      file: ../../../configs/general/setSegment.js
+      env:
+        SEGMENT: PRIORITY
+
+onFlowEnd:
+  - runScript:
+      file: ../../../configs/general/setSegment.js
+      env:
+        SEGMENT: MASS
+
+---
+#=============================================================================== Android
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_01.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_001
+      BALANCE_STATE: "before"
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_02.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_002
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_03.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_003
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_04.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_004
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_05.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_005
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_06.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_006
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_07.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_007
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_08.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_008
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_09.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_009
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_10.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_010
+
+- runFlow:
+    label: 
+    when:
+      platform: android
+    file: ../../../components/transfer-menu/transfer/android/TC_CHG_TRF_17_11.yml
+    env:
+      JIRA_ISSUE: 
+      TC: TC_CHG_TRF_17_011
+
+#=============================================================================== iOS

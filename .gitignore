@@ -1,0 +1,133 @@
+# ============================================
+# ENVIRONMENT & CREDENTIALS
+# ============================================
+.env
+.env.local
+.env.production
+
+# ============================================
+# DEPENDENCIES
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================================
+# GENERATED OUTPUT FILES
+# ============================================
+# Test Scenario files (generated from Jira)
+yml-ts/
+*.yml
+!format/*.yml
+
+# Test Cases files (generated from Jira)
+yml-tc/
+
+# Legacy output files
+yml/
+outputAllTS.yaml
+combined_labels.txt
+input.txt
+output.yaml
+scenario.yaml
+
+# ============================================
+# SYSTEM FILES
+# ============================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ============================================
+# IDE & EDITOR FILES
+# ============================================
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ============================================
+# LOGS & TEMPORARY FILES
+# ============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# ============================================
+# BACKUP & TEMPORARY FILES
+# ============================================
+*.bak
+*.tmp
+*.temp
+*~
+.#*
+
+# ============================================
+# PROJECT SPECIFIC
+# ============================================
+# Documentation yang tidak perlu di-push
+CLEANUP_SUMMARY.md
+FOLDER_GENERATION_SUMMARY.md
+GITHUB_PUSH_CHECKLIST.md
+
+# Test files
+test-output/
+*.test.yml

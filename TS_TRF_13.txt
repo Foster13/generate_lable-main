@@ -1,0 +1,36 @@
+01 - Klik Tombol Transfer
+02 - 1. Pengguna masuk ke Transfer Landing Page 2. Tombol transfer ke rekening sendiri ditampilkan
+03 - klik tombol transfer ke rekening sendiri
+04 - 1. Halaman Pilih Rekening Sendiri ditampilkan 2. Rekening CASA pengguna yang eligible untuk menerima transfer (status Active dan Dormant) diampilkan dengan format tampilan ; - nama account holder - nama produk rekening - nomor rekening
+05 - klik rekening CASA
+06 - 1. Pengguna masuk ke Transfer Detail/Gather screen 2. Rekening CASA yang telah dipilih di step #2 akan ditampilkan di bagian header pada Transfer Detail/Gather screen 3. Input field nominal dalam keadaan fokus 4. Keyboard phone dalam keadaan terbuka dan pengguna diminta untuk memasukan nominal transfer
+07 - masukkan nominal transfer pada input field
+08 - 1. Nominal transfer terisi 2. Maverick melakukan pengecekan Source of Fund 3. Dropdown SoF enabled 4. Rekening CASA detail yang dijadikan entry point transfer dipilih sebagai default SOF dan ditampilkan pada dropdown SOF
+09 - klik dropdown sumber dana
+10 - 1. Pengguna masuk ke halaman Pilih Sumber Dana 2. Pengguna dapat melihat daftar sumber dana yang dimiliki pengguna dengan informasi; - Nama Produk rekening - Nomor rekening - Saldo efektif rekening (saldo realtime - saldo blokir) 3. Rekening BNI yang dijadikan tujuan penerima tidak dimunculkan dalam daftar sumber dana
+11 - klik tombol Transfer Sekarang
+12 - 1. Pengguna masuk ke halaman Konfirmasi dan dapat melihat informasi penerima dengan format; - nama lengkap penerima sesuai hasil inquiry - nama alias bank tujuan - nomor rekening tujuan 2. Pengguna dapat melihat informasi pengirim dengan format ; - nama pemilik rekening - nama produk rekening - nomor rekening SOF 3. Pengguna dapat melihat detail transfer dengan informasi; - Nominal Transfer - Biaya Transaksi 0 4. Pengguna dapat melihat total transfer amount (nominal transfer + biaya transaksi) 5 . Tombol konfirmasi dalam kondisi enabled 6. Judul penerima dan pengirim dibold
+01 - klik tombol Konfirmasi
+02 - 1. Pengguna dapat melihat initial state field input MPIN yang kosong 2. Pengguna dapat input MPIN menggunakan keyboard numerik 3.Pengguna dapat input MPIN 6 digit numerik 4. ada tombol hapus dan tombol lupa PIN
+03 - masukkan 6 digit MPIN
+04 - 1. Maverick melakukan validasi MPIN 2. Maverick melakukan pengecekan status account Maverick 3. Maverick melakukan same CIF transfer limit checking 4. Maverick akan melakukan checking ke FDS 5. Maverick mengirimkan instruksi ke surrounding system terkait untuk mengeksekusi transfer 6. Maverick mendapat response eksekusi transfer berhasil dari Debit Core. 7. Dana nasabah terdebet
+01 - cek transfer result
+02 - 1. Result screen transfer sukses ditampilkan 2. Pengguna menerima notifikasi email 3. Pengguna dapat melihat informasi berikut di transfer result screen ; - status transaksi - reference number (yyyymmddhhmmss + seq number) - tanggal transaksi (dd mmm yyyy) - waktu transaksi (hh;mm;ss WIB) - nama penerima - bank penerima - nomor rekening penerima - nama pemilik rekening (masked) - nama produk rekening - nomor rekening SOF (masked, hanya menampilkan 3 digit terakhir) - currency dan nominal transfer (tanpa biaya) 2. Pengguna dapat melihat action button berikut di transfer result screen ; - Bukti Transfer - Simpan - Beranda - Share 3. Tombol simpan dalam kondisi disable
+03 - klik tombol share
+04 - menampilkan native share tray dari handphone pengguna
+05 - klik aplikasi dari native share tray
+06 - bukti transfer ditampilkan dalam bentuk jpeg
+01 - klik tombol Beranda di halaman transfer result
+02 - Pengguna kembali ke halaman Homescreen
+03 - klik tombol Transfer
+04 - Transfer landing page ditampilkan
+05 - klik tab transaksi terakhir
+06 - 1. Daftar transaksi terakhir ditampilkan 2. Transaksi transfer pengguna ditampilkan di paling atas pada daftar transaksi terakhir dengan format; - icon 2 huruf inisial penerima - nama penerima sesuai host, karakter ke 26 diubah menjadi elipsis - nama alias bank (BNI) - nomor rekening 3. Tombol tambah tidak ditampilkan (pengguna tidak bisa menambahkan transaksi ke rekening sendiri ke daftar penerima)
+01 - klik tombol Back
+02 - Pengguna kembali ke homescreen
+03 - klik icon riwayat transaksi
+04 - 1. Halaman riwayat transaksi ditampilkan 2. Pengguna dapat melihat transaksi transfer yang telah dilakukan oleh pengguna di halaman riwayat transaksi 3. Status transaksi berhasil
+05 - klik transaksi transfer di halaman riwayat transaksi
+06 - Pengguna dapat melihat bukti transaksi atas transfer berhasil
+07 - klik download
+08 - 1. Pengguna dapat menyimpan bukti transfer di device 2. Bukti transfer akan disimpan dalam format jpeg

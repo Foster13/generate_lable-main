@@ -1,0 +1,60 @@
+appId: ${APP_ID}
+
+env:
+  PATH_FOLDER_REPORT: ./reports
+
+onFlowStart:
+  - runScript:
+      file: ../../../automation-env.js
+  - runScript:
+      file: ../../../configs/onflowstart/onflowstart.js
+      env:
+        JIRA_ISSUE: ${JIRA_ISSUE}
+#   - runScript:
+#       file: ../../../../configs/onflowstart/onflowstartlogin.js
+
+onFlowComplete:
+  - runScript:
+      file: ../../../configs/onflowend/onflowend.js
+---
+# Scenario: TS_LOG_01_002 Pengguna setuju pada perubahan T&C terbaru lalu login dengan password yang benar
+#     When 01_Pengguna berhasil melewati Splash Screen
+#     Then 01_Pengguna diarahkan ke halaman T&C
+#     When 02_Pada halaman T&C, pengguna sudah membaca konten T&C hingga akhir dan klik Setuju
+#     Then 02_Pengguna diarahkan ke halaman Pre-login
+- runFlow :
+    label: 01 - Pengguna berhasil melewati Splash Screen
+    commands:
+      - waitForAnimationToEnd:
+          timeout: 3000
+- runFlow :
+    label: 02 - Pengguna diarahkan ke halaman T&C
+    commands:
+      - assertVisible: "SYARAT DAN KETENTUAN PENGGUNAAN wondr by BNI"
+      - tapOn:
+#          id: "MavTncScrollButton"
+          id: "${output.LOGIN.TNC_SCREEN.buttonScrollTNC}"
+      - takeScreenshot: ${output.PATH_FOLDER_REPORT}/01_${TC}
+- runFlow :
+    label: 03 - Pada halaman T&C, pengguna sudah membaca konten T&C hingga akhir dan klik Setuju
+    commands:
+      - tapOn:
+          id : "${output.LOGIN.TNC_SCREEN.buttonCheckboxSyaratdanKetentuan.id}"
+          index : "${output.LOGIN.TNC_SCREEN.buttonCheckboxSyaratdanKetentuan.index}"
+      - tapOn:
+          id: "${output.LOGIN.TNC_SCREEN.buttonCheckboxPromoPribadi.id}"
+          index: "${output.LOGIN.TNC_SCREEN.buttonCheckboxPromoPribadi.index}"
+      - tapOn:
+          id: "${output.LOGIN.TNC_SCREEN.buttonCheckboxPromoGrup.id}"
+          index: "${output.LOGIN.TNC_SCREEN.buttonCheckboxPromoGrup.index}"
+      - tapOn:
+          id: "${output.LOGIN.TNC_SCREEN.buttonSetuju}"
+
+- runFlow :
+    label: 04 - Pengguna berhasil melewati Splash Screen
+    commands:
+      - waitForAnimationToEnd:
+          timeout: 3000
+      - assertVisible: "Login"
+      - takeScreenshot: ${output.PATH_FOLDER_REPORT}/02_TS_LOG_01_002
+
