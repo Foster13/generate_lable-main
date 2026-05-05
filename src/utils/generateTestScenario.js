@@ -23,34 +23,19 @@ export function generateTestScenario(items, options = {}) {
   output += `appId: ${appId}\n`;
   output += `jsEngine: ${jsEngine}\n\n`;
 
-  // Tags
+  // Tags - sesuai template: acceptence test
   output += `tags:\n`;
-  tags.forEach(tag => {
-    output += `  - ${tag}\n`;
-  });
+  output += `  - acceptence test\n`;
 
-  // Environment variables
-  if (jiraFolderName) {
-    output += `env:\n`;
-    output += `  JIRA_FOLDER_NAME: ${jiraFolderName}\n`;
-  }
+  // Environment variables - sesuai template: CASA (tanpa " - Android")
+  output += `env:\n`;
+  output += `  JIRA_FOLDER_NAME: CASA\n`;
   output += `\n`;
 
-  // ========== ON FLOW START ==========
+  // ========== ON FLOW START ========== (hanya 1 script sesuai template)
   output += `onFlowStart:\n`;
   output += `  - runScript:\n`;
   output += `      file: ../../../automation-env.js\n`;
-  output += `  - runScript:\n`;
-  output += `      file: ../../../configs/general/setSegment.js\n`;
-  output += `      env:\n`;
-  output += `        SEGMENT: ${segment.priority}\n\n`;
-
-  // ========== ON FLOW END ==========
-  output += `onFlowEnd:\n`;
-  output += `  - runScript:\n`;
-  output += `      file: ../../../configs/general/setSegment.js\n`;
-  output += `      env:\n`;
-  output += `        SEGMENT: ${segment.mass}\n\n`;
 
   output += `---\n`;
 
@@ -67,7 +52,7 @@ export function generateTestScenario(items, options = {}) {
   });
 
   // ========== ANDROID SECTION ==========
-  output += `#=============================================================================== Android\n\n`;
+  output += `#=============================================================================== Android\n`;
 
   uniqueItems.forEach((item, index) => {
     const summary = item.issueSummary?.trim() || "";
@@ -76,47 +61,37 @@ export function generateTestScenario(items, options = {}) {
     
     // Extract TC number from summary (e.g., TS_POJK_CASA_01_001 -> TC_POJK_CASA_01_001)
     const tcNumber = tcName;
+    
+    // Get label from Jira (use summary or custom label)
+    const label = `${summary}`; // Bisa diisi dengan description dari Jira jika ada
 
     output += `- runFlow:\n`;
-    output += `    label: \n`; // Kosong sesuai format contoh
-    output += `    when:\n`;
-    output += `      platform: android\n`;
-    output += `    file: ${tcFilePathAndroid}${tcName}.yml\n`;
+    output += `    label: ${label}\n`; // Diisi dengan summary
+    output += `    file: ../../../components/pojk/pojk-casa/Android/${tcNumber}.yml\n`; // Path sesuai template
     output += `    env:\n`;
-    output += `      JIRA_ISSUE: \n`; // Kosong sesuai format contoh
+    output += `      PLATFORM: Android\n`; // Sesuai template
+    output += `      JIRA_ISSUE: ${issueKey}\n`; // Diisi dengan issue key
     output += `      TC: ${tcNumber}\n`;
-    
-    // Add BALANCE_STATE only for first item
-    if (index === 0) {
-      output += `      BALANCE_STATE: "before"\n`;
-    }
-    
     output += `\n`;
   });
 
   // ========== iOS SECTION ==========
-  output += `#=============================================================================== iOS\n\n`;
+  output += `#=============================================================================== iOS\n`;
 
   uniqueItems.forEach((item, index) => {
     const summary = item.issueSummary?.trim() || "";
     const issueKey = item.issueKey?.trim() || "";
     const tcName = summary.replace(/^TS_/, "TC_");
     const tcNumber = tcName;
+    const label = `${summary}`;
 
     output += `- runFlow:\n`;
-    output += `    label: \n`;
-    output += `    when:\n`;
-    output += `      platform: ios\n`;
-    output += `    file: ${tcFilePathIOS}${tcName}.yml\n`;
+    output += `    label: ${label}\n`;
+    output += `    file: ../../../components/pojk/pojk-casa/iOS/${tcNumber}.yml\n`; // Path sesuai template (iOS bukan ios)
     output += `    env:\n`;
-    output += `      JIRA_ISSUE: \n`;
+    output += `      PLATFORM: iOS\n`; // Sesuai template
+    output += `      JIRA_ISSUE: ${issueKey}\n`;
     output += `      TC: ${tcNumber}\n`;
-    
-    // Add BALANCE_STATE only for first item
-    if (index === 0) {
-      output += `      BALANCE_STATE: "before"\n`;
-    }
-    
     output += `\n`;
   });
 

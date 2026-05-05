@@ -1,0 +1,84 @@
+appId: ${APP_ID}
+env:
+  PATH_FOLDER_REPORT: ./reports
+
+onFlowStart:
+  - runScript:
+      file: ../../../../automation-env.js
+  - runScript:
+      file: ../../../../configs/onflowstart/onflowstart.js
+      env:
+        JIRA_ISSUE: ${JIRA_ISSUE}
+
+onFlowComplete:
+  - runScript: ../../../../configs/onflowend/onflowend.js
+---
+- runFlow:
+    label: 01 - Pengguna membuka aplikasi Wondr
+    commands:
+      - launchApp: ${APP_ID}
+- runFlow:
+    label: 02 - Pengguna melihat tampilan Splash Screen
+    commands:
+      - takeScreenshot: ${output.PATH_FOLDER_REPORT}/01_${TC}
+
+- runFlow :
+    label: 03 - Validasi Splash Screen selesai
+    commands:
+      - waitForAnimationToEnd:
+          timeout: 2000
+- runFlow :
+    label: 04 - Pengguna diarahkan ke halaman Pre-Login
+    commands:
+      - takeScreenshot: ${output.PATH_FOLDER_REPORT}/02_${TC}
+
+- runFlow :
+    label: 05 - Pengguna klik Login pada halaman Pre Login dan melakukan Login
+    commands:
+      - tapOn:
+          id: "${output.CASA.PRELOGIN_SCREEN.buttonLogin}"
+      - assertVisible:
+          id: "${output.CASA.PASSWORD_SCREEN.textFieldPassword}"
+      - inputText: "pass123"
+      - tapOn:
+          id: "${output.CASA.PASSWORD_SCREEN.buttonLogin}"
+- runFlow :
+    label: 06 - Pengguna berhasil login dan tiba di halaman Home Screen Tab "Transact"
+    commands:
+      - waitForAnimationToEnd:
+          timeout: 2000
+      - takeScreenshot: ${output.PATH_FOLDER_REPORT}/03_${TC}
+
+- runFlow:
+    label: 07 - Pengguna klik Lambang Explore pada halaman atas Home Screen
+    commands:
+      - tapOn:
+          id: "${output.CASA.HOMESCREEN.buttonLihatSemua}"
+- runFlow:
+    label: 08 - Pengguna tiba di halaman Explore
+    commands:
+      - waitForAnimationToEnd:
+          timeout: 2000
+      - takeScreenshot: ${output.PATH_FOLDER_REPORT}/04_${TC}
+
+- runFlow:
+    label: 09 - Pengguna klik Tabungan & Giro pada bagian Save di halaman Explore
+    commands:
+      - tapOn:
+          id: "${output.CASA.EXPLORE_SCREEN.buttonSAVINGS_AND_CURRENT}"
+- runFlow:
+    label: 10 - Pengguna tiba di halaman CASA - View Account List
+    commands:
+      - waitForAnimationToEnd:
+          timeout: 3000
+      - takeScreenshot: ${output.PATH_FOLDER_REPORT}/05_${TC}
+
+- runFlow:
+    label: 11 - Verifikasi tabulasi yang aktif; Tabungan & Giro
+    commands:
+      - waitForAnimationToEnd:
+          timeout: 3000
+- runFlow:
+    label: 12 - Tabulasi yang aktif; Tabungan & Giro
+    commands:
+      - takeScreenshot: ${output.PATH_FOLDER_REPORT}/06_${TC}

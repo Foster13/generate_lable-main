@@ -17,35 +17,23 @@ export function generateTestCaseYAML(steps, tcName, issueKey, outputDir = "./yml
   let yamlContent = "";
 
   // ========== HEADER ==========
-  yamlContent += `appId: \${APP_ID}\n\n`;
+  yamlContent += `appId: \${APP_ID}\n`;
   yamlContent += `env:\n`;
   yamlContent += `  PATH_FOLDER_REPORT: ./reports\n\n`;
 
-  // ========== ON FLOW START ==========
+  // ========== ON FLOW START ========== (sesuai contohTC2.yml)
   yamlContent += `onFlowStart:\n`;
+  yamlContent += `  - runScript:\n`;
+  yamlContent += `      file: ../../../../automation-env.js\n`; // Tambah automation-env.js
   yamlContent += `  - runScript:\n`;
   yamlContent += `      file: ../../../../configs/onflowstart/onflowstart.js\n`;
   yamlContent += `      env:\n`;
   yamlContent += `        JIRA_ISSUE: \${JIRA_ISSUE}\n`;
 
-  // Add balance script untuk first atau last
-  if (isFirst) {
-    yamlContent += `  - runScript:\n`;
-    yamlContent += `      file: ../../../../configs/get-balance.js\n`;
-    yamlContent += `      env:\n`;
-    yamlContent += `        BALANCE_STATE: before\n`;
-  } else if (isLast) {
-    yamlContent += `  - runScript:\n`;
-    yamlContent += `      file: ../../../../configs/get-balance.js\n`;
-    yamlContent += `      env:\n`;
-    yamlContent += `        BALANCE_STATE: after\n`;
-  }
-
   // ========== ON FLOW COMPLETE ==========
   yamlContent += `\n`;
   yamlContent += `onFlowComplete:\n`;
-  yamlContent += `  - runScript:\n`;
-  yamlContent += `      file: ../../../../configs/onflowend/onflowend.js\n`;
+  yamlContent += `  - runScript: ../../../../configs/onflowend/onflowend.js\n`; // Format lebih simple
   yamlContent += `---\n`;
 
   // ========== TEST STEPS ==========
@@ -55,16 +43,16 @@ export function generateTestCaseYAML(steps, tcName, issueKey, outputDir = "./yml
   let labelCounter = 1;
   
   steps.forEach((item) => {
-    // Label ganjil - Test Step
+    // Label ganjil - Test Step (commands need to be filled manually)
     const step = item.step?.trim()?.replace(/:/g, ";") || "";
-    yamlContent += `- runFlow :\n`;
+    yamlContent += `- runFlow:\n`;
     yamlContent += `    label: ${labelCounter.toString().padStart(2, '0')} - ${step}\n`;
     yamlContent += `    commands:\n`;
     labelCounter++;
 
-    // Label genap - Expected Result
+    // Label genap - Expected Result (with screenshot)
     const result = item.result?.replace(/\n/g, " ").replace(/\s+/g, " ").replace(/:/g, ";").trim() || "";
-    yamlContent += `- runFlow :\n`;
+    yamlContent += `- runFlow:\n`;
     yamlContent += `    label: ${labelCounter.toString().padStart(2, '0')} - ${result}\n`;
     yamlContent += `    commands:\n`;
     yamlContent += `      - takeScreenshot: \${output.PATH_FOLDER_REPORT}/${screenshotCounter.toString().padStart(2, '0')}_\${TC}\n`;

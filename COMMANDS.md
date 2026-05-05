@@ -6,7 +6,7 @@ Penjelasan lengkap semua commands yang tersedia di `package.json`.
 
 ## 🚀 Available Commands
 
-Project ini memiliki **4 commands** yang powerful dan efisien:
+Project ini memiliki **6 commands** yang powerful dan efisien:
 
 ### 1. `npm run generate-complete` ⭐ RECOMMENDED
 
@@ -306,3 +306,166 @@ JIRA_FOLDER_NAME=CASA - Android
 🎯 **Batch Processing** - Multiple Test Scenarios + All Test Cases  
 
 **Version:** 3.1.0 with Folder-based Generation 🚀
+
+---
+
+### 5. `npm run convert-yaml`
+
+**File:** `src/convertYamlToJs.js`
+
+**Deskripsi:**
+Convert YAML automation scripts to JavaScript objects for easier element management.
+
+**Proses:**
+```
+1. Parse YAML file
+   ↓
+2. Extract elements (ids, texts, actions)
+   ↓
+3. Generate JavaScript object
+   → output.js
+```
+
+**Usage:**
+```bash
+npm run convert-yaml <input.yml> <output.js> [objectName]
+```
+
+**Output:**
+JavaScript object with element mappings
+
+**Kapan digunakan:**
+- Convert YAML automation to JS objects
+- Element mapping for test frameworks
+- Basic YAML to JS conversion
+
+**Contoh:**
+```bash
+npm run convert-yaml coba.yml LoginElements.js
+npm run convert-yaml test.yml elements/TestElements.js TestElements
+
+# Output: LoginElements.js
+output.LoginElements = {
+  buttonLogin: 'Login',
+  textPassword: 'Password',
+  // ...
+}
+```
+
+---
+
+### 6. `npm run convert-yaml-login` ⭐ RECOMMENDED
+
+**File:** `src/convertYamlToLogin.js`
+
+**Deskripsi:**
+Convert YAML automation scripts to JavaScript objects using `format/login.js` structure as reference. Smart screen detection and element categorization.
+
+**Proses:**
+```
+1. Parse YAML file
+   ↓
+2. Detect screen contexts (PRELOGIN_SCREEN, PASSWORD_SCREEN, etc.)
+   ↓
+3. Categorize elements by screen
+   ↓
+4. Generate format/login.js style structure
+   → output.js
+```
+
+**Usage:**
+```bash
+npm run convert-yaml-login <input.yml> <output.js> [moduleName]
+```
+
+**Output:**
+JavaScript object organized by screen context
+
+**Features:**
+- 🎯 Smart screen detection
+- 🧹 Clean element naming
+- 🔄 Duplicate removal
+- 📱 Screen-based organization
+- 🎨 format/login.js style
+
+**Kapan digunakan:**
+- ✅ Convert YAML to screen-organized JS
+- ✅ Match format/login.js structure
+- ✅ Production automation scripts
+- ✅ Complex multi-screen flows
+
+**Contoh:**
+```bash
+npm run convert-yaml-login coba.yml LoginElements.js
+npm run convert-yaml-login automation.yml elements/LoginMap.js AUTOMATION
+
+# Output: LoginElements.js
+output.LOGIN = {
+    PRELOGIN_SCREEN: {
+        buttonEWallet: 'E-Wallet',
+        buttonQRIS: 'QRIS',
+        buttonLogin: 'Login'
+    },
+    PASSWORD_SCREEN: {
+        textFieldPassword: 'pass123',
+        textPassword: 'Password'
+    },
+    HOMESCREEN: {
+        buttonTransfer: 'MavIconButtonButtonTransfer'
+    }
+}
+```
+
+---
+
+## 📊 Updated Commands Comparison
+
+| Command | Scope | Output | Time | Best For |
+|---------|-------|--------|------|----------|
+| `generate-complete` ⭐ | 1 Label | TS + TC | ~10s | Development |
+| `generate` ⭐ | 1 Label | TS + TC | ~10s | Quick Dev |
+| `generate-folder` 🚀 | Entire Folder | Many TS + TC | ~60s | Production |
+| `generate-ts` | 1 Label | TS Only | ~2s | TS Only |
+| `convert-yaml` | 1 YAML File | JS Object | ~1s | Basic Conversion |
+| `convert-yaml-login` ⭐ | 1 YAML File | Screen-organized JS | ~1s | Advanced Conversion |
+
+---
+
+## 🎯 Updated Workflow Recommendations
+
+### Scenario 1: Development & Testing (Jira to YAML)
+```bash
+# Setup single label
+echo "JIRA_LABELS=TS_POJK_CASA_02" >> .env
+
+# Generate for development
+npm run generate-complete
+```
+
+### Scenario 2: Production Batch (Jira to YAML)
+```bash
+# Setup folder
+echo "JIRA_FOLDER_NAME=CASA - Android" >> .env
+
+# Generate all at once
+npm run generate-folder
+```
+
+### Scenario 3: YAML to JavaScript Conversion
+```bash
+# Basic conversion
+npm run convert-yaml automation.yml ElementMap.js
+
+# Advanced conversion (recommended)
+npm run convert-yaml-login automation.yml LoginElements.js
+```
+
+### Scenario 4: Complete Automation Pipeline
+```bash
+# Step 1: Generate from Jira
+npm run generate-folder
+
+# Step 2: Convert YAML to JS (for each automation file)
+npm run convert-yaml-login yml-tc/TC_POJK_CASA_01_001.yml elements/TC01.js
+npm run convert-yaml-login yml-tc/TC_POJK_CASA_01_002.yml elements/TC02.js
+```

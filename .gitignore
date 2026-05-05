@@ -123,11 +123,6 @@ coverage/
 # ============================================
 # PROJECT SPECIFIC
 # ============================================
-# Documentation yang tidak perlu di-push
-CLEANUP_SUMMARY.md
-FOLDER_GENERATION_SUMMARY.md
-GITHUB_PUSH_CHECKLIST.md
-
 # Test files
 test-output/
 *.test.yml

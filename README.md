@@ -80,4 +80,25 @@ JIRA_FOLDER_NAME=CASA - Android
 
 **Single Label:** Generate 1 Test Scenario untuk 1 label  
 **Folder Mode:** Generate semua Test Scenarios dalam folder (batch)
+
+## 📁 Output Structure
+
 ```
+project/
+├── yml-ts/                    # Test Scenarios
+│   ├── TS_POJK_CASA_01.yml
+│   ├── TS_POJK_CASA_02.yml
+│   └── ...
+│
+└── yml-tc/                    # Test Cases
+    ├── TC_POJK_CASA_01_001.yml
+    ├── TC_POJK_CASA_01_002.yml
+    └── ...
+```
+
+## 📖 Dokumentasi
+
+- **[QUICK_START.md](QUICK_START.md)** - Panduan cepat memulai
+- **[COMMANDS.md](COMMANDS.md)** - Daftar lengkap commands
+- **[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)** - Struktur folder project
+- **[CHANGELOG.md](CHANGELOG.md)** - Riwayat perubahan
