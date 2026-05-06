@@ -3,7 +3,6 @@ import {
   JIRA_BASE_URL,
   JIRA_VERSION_NAME,
   JIRA_CYCLE_NAME,
-  JIRA_PAGINATION,
   JIRA_FOLDER_NAME
 } from "../utils/constans.js";
 
@@ -18,14 +17,8 @@ export async function getAllByFolder(authHeader) {
   const cycle = encodeURIComponent(JIRA_CYCLE_NAME);
   const folder = encodeURIComponent(JIRA_FOLDER_NAME);
 
-  let offset = 0;
-
-  // Convert pagination parameter
-  if (JIRA_PAGINATION === "1" || JIRA_PAGINATION === "") {
-    offset = 0;
-  } else {
-    offset = JIRA_PAGINATION * 20 - 20;
-  }
+  // Always start from offset 0 (first page)
+  const offset = 0;
 
   // Query dengan folderName instead of labels
   const url = `${JIRA_BASE_URL}/rest/zapi/latest/zql/executeSearch?zqlQuery=fixVersion%20%3D%20"${version}"%20AND%20cycleName%20in%20("${cycle}")%20AND%20folderName%20in%20("${folder}")&view=list&searchType=advance&offset=${offset}&maxRecords=20`;
