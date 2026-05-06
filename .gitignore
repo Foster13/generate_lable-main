@@ -24,6 +24,10 @@ yml-ts/
 # Test Cases files (generated from Jira)
 yml-tc/
 
+# Custom output folders (generated from Jira with OUTPUT_FOLDER)
+pojk-home/
+pojk-*/
+
 # Legacy output files
 yml/
 outputAllTS.yaml

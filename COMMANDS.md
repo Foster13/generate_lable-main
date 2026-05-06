@@ -69,7 +69,7 @@ Alias untuk `generate-complete`. Sama persis, hanya lebih singkat untuk diketik.
 **File:** `src/generateByFolder.js`
 
 **Deskripsi:**
-Generate semua Test Scenarios dan Test Cases dari entire Jira folder. Batch generation yang sangat powerful!
+Generate semua Test Scenarios dan Test Cases dari entire Jira folder. Batch generation yang sangat powerful! Sekarang support **custom output folder** via environment variable `OUTPUT_FOLDER`.
 
 **Proses:**
 ```
@@ -78,45 +78,77 @@ Generate semua Test Scenarios dan Test Cases dari entire Jira folder. Batch gene
 2. Group test cases by label
    ↓
 3. Generate multiple Test Scenarios (1 per label)
-   → yml-ts/TS_*.yml
+   → {OUTPUT_FOLDER}/yml-ts/TS_*.yml (or yml-ts/ if not set)
    ↓
 4. Generate ALL Test Cases
-   → yml-tc/TC_*.yml
+   → {OUTPUT_FOLDER}/yml-tc/TC_*.yml (or yml-tc/ if not set)
 ```
 
 **Output:**
-- `yml-ts/TS_POJK_CASA_01.yml` - Test Scenario 1
-- `yml-ts/TS_POJK_CASA_02.yml` - Test Scenario 2
-- `yml-ts/TS_POJK_CASA_03.yml` - Test Scenario 3
-- ... (semua labels dalam folder)
-- `yml-tc/TC_*.yml` - All Test Cases
+- Default (no OUTPUT_FOLDER): `yml-ts/` dan `yml-tc/`
+- Custom (with OUTPUT_FOLDER): `{OUTPUT_FOLDER}/yml-ts/` dan `{OUTPUT_FOLDER}/yml-tc/`
 
 **Kapan digunakan:**
 - ✅ **Production deployment** - Generate entire module
 - ✅ **Batch processing** - Semua labels sekaligus
 - ✅ **Time saving** - 1 command untuk semua
 - ✅ **Complete automation** - Entire folder
+- ✅ **Custom output** - Pisahkan per fitur/module
 
 **Contoh:**
+
+#### Default Output:
 ```bash
 # .env
 JIRA_FOLDER_NAME=CASA - Android
+# OUTPUT_FOLDER tidak di-set
 
 # Command
 npm run generate-folder
 
-# Output (Example)
-32 Test Scenarios generated:
+# Output
 yml-ts/TS_POJK_CASA_01.yml
 yml-ts/TS_POJK_CASA_02.yml
 ...
-yml-ts/TS_POJK_CASA_32.yml
-
-65 Test Cases generated:
 yml-tc/TC_POJK_CASA_01_001.yml
 yml-tc/TC_POJK_CASA_01_002.yml
 ...
-yml-tc/TC_POJK_CASA_32_003.yml
+```
+
+#### Custom Output Folder:
+```bash
+# .env
+JIRA_FOLDER_NAME=Home - Android
+OUTPUT_FOLDER=pojk-home
+
+# Command
+npm run generate-folder
+
+# Output
+pojk-home/yml-ts/TS_POJK_HOME_01.yml
+pojk-home/yml-ts/TS_POJK_HOME_02.yml
+...
+pojk-home/yml-tc/TC_POJK_HOME_01_001.yml
+pojk-home/yml-tc/TC_POJK_HOME_02_001.yml
+...
+```
+
+#### Multiple Features:
+```bash
+# Transfer Feature
+JIRA_FOLDER_NAME=Transfer - Android
+OUTPUT_FOLDER=pojk-transfer
+npm run generate-folder
+
+# Login Feature
+JIRA_FOLDER_NAME=Login - Android
+OUTPUT_FOLDER=pojk-login
+npm run generate-folder
+
+# Payment Feature
+JIRA_FOLDER_NAME=Payment - Android
+OUTPUT_FOLDER=pojk-payment
+npm run generate-folder
 ```
 
 **Console Output:**
@@ -183,6 +215,8 @@ Generate Test Scenario saja, tanpa generate Test Cases.
 
 ---
 
+---
+
 ## 📊 Perbandingan Commands
 
 | Command | Scope | Test Scenarios | Test Cases | Time | Best For |
@@ -204,8 +238,16 @@ npm run generate-complete
 
 ### Scenario 2: Production Deployment
 ```bash
-# Entire module untuk production
+# Entire module untuk production (default output)
 npm run generate-folder
+```
+
+### Scenario 2b: Custom Output Folder
+```bash
+# Generate ke folder terpisah per fitur
+# .env: OUTPUT_FOLDER=pojk-home
+npm run generate-folder
+```
 ```
 
 ### Scenario 3: Quick Test Scenario Update
@@ -218,10 +260,12 @@ npm run generate-ts
 ```bash
 # Ganti folder di .env
 JIRA_FOLDER_NAME=Transfer - Android
+OUTPUT_FOLDER=pojk-transfer
 npm run generate-folder
 
 # Ganti ke folder lain
 JIRA_FOLDER_NAME=Login - iOS
+OUTPUT_FOLDER=pojk-login
 npm run generate-folder
 ```
 
