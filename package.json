@@ -6,9 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generate": "node src/generateCompleteV2.js",
-    "generate-complete": "node src/generateCompleteV2.js",
-    "generate-ts": "node src/utils/generateTSOnly.js",
+    "generate": "node src/generateByFolder.js",
     "generate-folder": "node src/generateByFolder.js"
   },
   "keywords": [],

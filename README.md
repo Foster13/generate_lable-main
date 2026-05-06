@@ -1,6 +1,6 @@
 # Test Generator - Jira to YAML
 
-Generator otomatis untuk membuat Test Scenario dan Test Cases dari JIRA dalam format YAML.
+Generator otomatis untuk membuat Test Scenario dan Test Cases dari JIRA dalam format YAML berdasarkan folder.
 
 ## 🚀 Quick Start
 
@@ -14,10 +14,10 @@ npm install
 
 # 3. Setup environment
 cp .env.example .env
-# Edit .env dengan credentials JIRA Anda
+# Edit .env dengan credentials JIRA dan folder name
 
 # 4. Generate!
-npm run generate-folder
+npm run generate
 ```
 
 **📖 Panduan lengkap:** Lihat [QUICK_START.md](QUICK_START.md)
@@ -26,83 +26,33 @@ npm run generate-folder
 
 ## 📋 Features
 
-✅ **Fetch dari JIRA** - Ambil test cases langsung dari JIRA  
+✅ **Fetch dari JIRA** - Ambil test cases langsung dari JIRA folder  
 ✅ **Auto Generate** - Generate Test Scenarios dan Test Cases otomatis  
 ✅ **Batch Processing** - Generate entire folder sekaligus  
 ✅ **Custom Output** - Output ke folder terpisah per fitur  
-✅ **Pagination Support** - Handle large folders otomatis  
+✅ **Auto Pagination** - Handle large folders otomatis  
 ✅ **Rich Logging** - Progress tracking yang detail
 
 ---
 
 ## 🎯 Usage
 
-### Mode 1: Single Label (Development)
-
-Generate 1 label spesifik untuk development:
+### Generate dari JIRA Folder
 
 ```bash
-# .env
-JIRA_LABELS = TS_POJK_CASA_01
+# Edit .env
+JIRA_VERSION_NAME = Regression R5.2
+JIRA_CYCLE_NAME = Feature R2
+JIRA_FOLDER_NAME = Profile and Settings - Android
+OUTPUT_FOLDER = profilesettings
 
-# Command
+# Generate
 npm run generate
 ```
 
 **Output:**
-- `yml-ts/TS_POJK_CASA_01.yml` - 1 Test Scenario
-- `yml-tc/TC_POJK_CASA_01_*.yml` - Test Cases untuk label tersebut
-
----
-
-### Mode 2: Entire Folder (Production) ⭐ RECOMMENDED
-
-Generate semua labels dalam 1 folder untuk production:
-
-```bash
-# .env
-JIRA_FOLDER_NAME = CASA - Android
-
-# Command
-npm run generate-folder
-```
-
-**Output:**
-- `yml-ts/TS_POJK_CASA_*.yml` - Multiple Test Scenarios (1 per label)
-- `yml-tc/TC_POJK_CASA_*.yml` - All Test Cases dalam folder
-
-**Example:** Folder "CASA - Android" → 32 Test Scenarios + 65 Test Cases
-
----
-
-### Mode 3: Custom Output Folder
-
-Generate ke folder terpisah per fitur:
-
-```bash
-# .env
-JIRA_FOLDER_NAME = Home - Android
-OUTPUT_FOLDER = pojk-home
-
-# Command
-npm run generate-folder
-```
-
-**Output:**
-- `pojk-home/yml-ts/TS_POJK_HOME_*.yml` - Test Scenarios
-- `pojk-home/yml-tc/TC_POJK_HOME_*.yml` - Test Cases
-
----
-
-## 📊 Commands
-
-| Command | Description | Use Case |
-|---------|-------------|----------|
-| `npm run generate` | Generate 1 label | Development |
-| `npm run generate-folder` | Generate entire folder | Production |
-| `npm run generate-ts` | Generate TS only | Quick update |
-
-**📖 Dokumentasi lengkap:** Lihat [COMMANDS.md](COMMANDS.md)
+- `profilesettings/yml-ts/` - Test Scenarios
+- `profilesettings/yml-tc/` - Test Cases
 
 ---
 
@@ -114,17 +64,36 @@ npm run generate-folder
 # JIRA Credentials
 JIRA_USERNAME = your_username
 JIRA_PASSWORD = your_password
-JIRA_BASE_URL = "https://jira.bni.co.id"
-JIRA_VERSION_NAME = Sq Fraud Audit
-JIRA_CYCLE_NAME = Acceptance Test
+JIRA_BASE_URL = https://jira.bni.co.id
 
-# Generation Mode
-JIRA_LABELS = TS_POJK_CASA_01           # Single label mode
-JIRA_FOLDER_NAME = CASA - Android       # Folder mode
+# JIRA Query Parameters (sesuaikan dengan JIRA Anda)
+JIRA_VERSION_NAME = Regression R5.2
+JIRA_CYCLE_NAME = Feature R2
+JIRA_FOLDER_NAME = Profile and Settings - Android
 
-# Optional: Custom output folder
-OUTPUT_FOLDER = pojk-home               # Output to pojk-home/yml-ts and pojk-home/yml-tc
+# Output Configuration (optional)
+OUTPUT_FOLDER = profilesettings
 ```
+
+### Parameter yang Perlu Diubah:
+
+| Parameter | Keterangan | Contoh |
+|-----------|------------|--------|
+| `JIRA_VERSION_NAME` | Version dari JIRA | `Regression R5.2`, `Sprint 10` |
+| `JIRA_CYCLE_NAME` | Cycle dari JIRA | `Feature R2`, `Acceptance Test` |
+| `JIRA_FOLDER_NAME` | Folder name di JIRA (exact match!) | `Profile and Settings - Android` |
+| `OUTPUT_FOLDER` | Custom output folder (optional) | `profilesettings`, `transfer` |
+
+---
+
+## 📊 Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run generate` | Generate Test Scenarios & Test Cases dari JIRA folder |
+| `npm run generate-folder` | Alias untuk `npm run generate` |
+
+**📖 Dokumentasi lengkap:** Lihat [COMMANDS.md](COMMANDS.md)
 
 ---
 
@@ -143,9 +112,9 @@ generate-label/
 │   ├── utils/                  # Utilities
 │   │   ├── constans.js
 │   │   ├── generateTestCaseYAML.js
+│   │   ├── generateTestScenario.js
 │   │   └── groupByLabel.js
-│   ├── generateByFolder.js     # Folder-based generator
-│   └── generateCompleteV2.js   # Single label generator
+│   └── generateByFolder.js     # Main generator
 │
 ├── format/                     # Templates & references
 │   ├── contohTC2.yml           # Test Case template
@@ -153,7 +122,7 @@ generate-label/
 │
 ├── yml-ts/                     # Generated Test Scenarios (gitignored)
 ├── yml-tc/                     # Generated Test Cases (gitignored)
-├── pojk-home/                  # Custom output folder (gitignored)
+├── profilesettings/            # Custom output folder (gitignored)
 │
 ├── .env                        # Environment config (gitignored)
 ├── .env.example                # Environment template
@@ -167,47 +136,45 @@ generate-label/
 
 ## 🔄 Workflow
 
-### Development Workflow
+### Generate untuk Fitur Baru
 
 ```bash
-# 1. Set single label
-JIRA_LABELS=TS_POJK_CASA_02
+# 1. Edit .env - Ubah 4 parameter
+JIRA_VERSION_NAME = [Your Version]
+JIRA_CYCLE_NAME = [Your Cycle]
+JIRA_FOLDER_NAME = [Your Folder]
+OUTPUT_FOLDER = [output-folder]
 
 # 2. Generate
 npm run generate
 
-# 3. Test & iterate
+# 3. Done! Files ready in [output-folder]/yml-ts/ and [output-folder]/yml-tc/
 ```
 
-### Production Workflow
+### Contoh untuk Berbagai Fitur:
 
-```bash
-# 1. Set folder
-JIRA_FOLDER_NAME=CASA - Android
-
-# 2. Generate all
-npm run generate-folder
-
-# 3. Deploy
+**Profile & Settings:**
+```env
+JIRA_VERSION_NAME = Regression R5.2
+JIRA_CYCLE_NAME = Feature R2
+JIRA_FOLDER_NAME = Profile and Settings - Android
+OUTPUT_FOLDER = profilesettings
 ```
 
-### Multi-Feature Workflow
+**Transfer:**
+```env
+JIRA_VERSION_NAME = Sprint 10
+JIRA_CYCLE_NAME = Regression Test
+JIRA_FOLDER_NAME = Transfer - Android
+OUTPUT_FOLDER = transfer
+```
 
-```bash
-# Generate Home feature
-JIRA_FOLDER_NAME=Home - Android
-OUTPUT_FOLDER=pojk-home
-npm run generate-folder
-
-# Generate Transfer feature
-JIRA_FOLDER_NAME=Transfer - Android
-OUTPUT_FOLDER=pojk-transfer
-npm run generate-folder
-
-# Generate Login feature
-JIRA_FOLDER_NAME=Login - Android
-OUTPUT_FOLDER=pojk-login
-npm run generate-folder
+**Home (default output):**
+```env
+JIRA_VERSION_NAME = Sq Fraud Audit
+JIRA_CYCLE_NAME = Acceptance Test
+JIRA_FOLDER_NAME = Home - Android
+OUTPUT_FOLDER =
 ```
 
 ---
@@ -215,23 +182,24 @@ npm run generate-folder
 ## 📖 Documentation
 
 - **[QUICK_START.md](QUICK_START.md)** - Panduan lengkap dari clone sampai generate
-- **[COMMANDS.md](COMMANDS.md)** - Referensi lengkap semua commands
-- **[POJK_HOME_GENERATION.md](POJK_HOME_GENERATION.md)** - Contoh penggunaan OUTPUT_FOLDER
+- **[COMMANDS.md](COMMANDS.md)** - Referensi lengkap commands
+- **[PROFILE_SETTINGS_GENERATION.md](PROFILE_SETTINGS_GENERATION.md)** - Contoh Profile & Settings
+- **[POJK_HOME_GENERATION.md](POJK_HOME_GENERATION.md)** - Contoh Home feature
 
 ---
 
 ## ❌ Troubleshooting
 
-### Error: "JIRA_USERNAME is not set"
+### Error: "JIRA_FOLDER_NAME is not set"
 ```bash
-cp .env.example .env
-# Edit .env dan isi credentials
+# Edit .env dan set JIRA_FOLDER_NAME
+JIRA_FOLDER_NAME = Profile and Settings - Android
 ```
 
 ### Error: "No test cases found"
 ```env
-# Pastikan folder name exact match dengan JIRA
-JIRA_FOLDER_NAME = CASA - Android
+# Pastikan folder name exact match dengan JIRA (case-sensitive!)
+JIRA_FOLDER_NAME = Profile and Settings - Android
 ```
 
 ### Error: Koneksi JIRA gagal
@@ -248,44 +216,52 @@ ping jira.bni.co.id
 
 ## 🎯 Examples
 
-### Example 1: Generate CASA Module
+### Example 1: Profile & Settings
 ```bash
 # .env
-JIRA_FOLDER_NAME = CASA - Android
-
-# Generate
-npm run generate-folder
-
-# Result
-✅ 32 Test Scenarios
-✅ 65 Test Cases
-```
-
-### Example 2: Generate Home Feature
-```bash
-# .env
-JIRA_FOLDER_NAME = Home - Android
-OUTPUT_FOLDER = pojk-home
-
-# Generate
-npm run generate-folder
-
-# Result
-✅ pojk-home/yml-ts/ (14 files)
-✅ pojk-home/yml-tc/ (31 files)
-```
-
-### Example 3: Generate Single Label
-```bash
-# .env
-JIRA_LABELS = TS_POJK_CASA_01
+JIRA_VERSION_NAME = Regression R5.2
+JIRA_CYCLE_NAME = Feature R2
+JIRA_FOLDER_NAME = Profile and Settings - Android
+OUTPUT_FOLDER = profilesettings
 
 # Generate
 npm run generate
 
 # Result
-✅ yml-ts/TS_POJK_CASA_01.yml
-✅ yml-tc/TC_POJK_CASA_01_*.yml
+✅ 11 Test Scenarios → profilesettings/yml-ts/
+✅ 16 Test Cases → profilesettings/yml-tc/
+```
+
+### Example 2: Transfer Feature
+```bash
+# .env
+JIRA_VERSION_NAME = Sprint 10
+JIRA_CYCLE_NAME = Regression Test
+JIRA_FOLDER_NAME = Transfer - Android
+OUTPUT_FOLDER = transfer
+
+# Generate
+npm run generate
+
+# Result
+✅ Test Scenarios → transfer/yml-ts/
+✅ Test Cases → transfer/yml-tc/
+```
+
+### Example 3: Default Output
+```bash
+# .env
+JIRA_VERSION_NAME = Sq Fraud Audit
+JIRA_CYCLE_NAME = Acceptance Test
+JIRA_FOLDER_NAME = CASA - Android
+OUTPUT_FOLDER =
+
+# Generate
+npm run generate
+
+# Result
+✅ Test Scenarios → yml-ts/
+✅ Test Cases → yml-tc/
 ```
 
 ---
@@ -322,7 +298,7 @@ This project is licensed under the ISC License.
 
 ---
 
-**Version:** 3.1.0  
+**Version:** 3.2.0  
 **Last Updated:** May 2026
 
 **Need help?** Check [QUICK_START.md](QUICK_START.md) or [COMMANDS.md](COMMANDS.md)
