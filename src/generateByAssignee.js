@@ -1,25 +1,32 @@
 import { getAuthHeader } from "./jira/auth.js";
-import { getAllByFolderWithPagination } from "./jira/getAllByFolder.js";
+import { getAllByAssigneeWithPagination } from "./jira/getAllByAssignee.js";
 import { groupByLabel, getSortedLabels, getGroupStatistics } from "./utils/groupByLabel.js";
 import { generateAllTestScenariosYaml } from "./generator/generateAllTestScenariosYaml.js";
 import { generateAllTestCasesYaml } from "./generator/generateAllTestCasesYaml.js";
-import { JIRA_PASSWORD, JIRA_USERNAME, JIRA_FOLDER_NAME, OUTPUT_FOLDER } from "./utils/constans.js";
+import { JIRA_PASSWORD, JIRA_USERNAME, JIRA_ASSIGNEE, JIRA_EXECUTION_STATUS, OUTPUT_FOLDER_ASSIGNEE } from "./utils/constans.js";
 import fs from "fs";
 
 /**
- * Complete Generator Pipeline - Folder Based (No Assignee Filter)
- * Generate multiple Test Scenarios and Test Cases from a Jira folder
+ * Complete Generator Pipeline - Assignee Only Mode
+ * Generate Test Scenarios and Test Cases for assignee with execution status
+ * NO version, cycle, or folder filter - purely by assignee + status
  * 
  * Flow:
- * 1. Fetch all test cases from Jira folder (ALL assignees)
+ * 1. Fetch all test cases assigned to user with specific execution status (ALL versions, cycles, folders)
  * 2. Group test cases by label (TS_POJK_CASA_01, TS_POJK_CASA_02, etc)
  * 3. Generate Test Scenario for each label
  * 4. Generate Test Cases for all test cases
  * 
- * Required: JIRA_FOLDER_NAME must be set in .env
- * Optional: OUTPUT_FOLDER to customize output directory
+ * Required: JIRA_ASSIGNEE must be set in .env
+ * Optional: JIRA_EXECUTION_STATUS (default: UNEXECUTED)
+ * Optional: OUTPUT_FOLDER_ASSIGNEE to customize output directory
  * 
- * Example: JIRA_FOLDER_NAME=Profile - Android
+ * Example:
+ * JIRA_ASSIGNEE=john.doe
+ * JIRA_EXECUTION_STATUS=UNEXECUTED
+ * OUTPUT_FOLDER_ASSIGNEE=all-my-tests
+ * 
+ * Note: Version and Cycle are NOT used in this mode
  */
 
 const USERNAME = JIRA_USERNAME;
@@ -27,42 +34,47 @@ const PASSWORD = JIRA_PASSWORD;
 
 const authHeader = getAuthHeader(USERNAME, PASSWORD);
 
-async function runFolderGeneration() {
+async function runAssigneeGeneration() {
   try {
     console.log("╔════════════════════════════════════════════════════════════╗");
-    console.log("║     FOLDER-BASED GENERATION PIPELINE                      ║");
-    console.log("║     Batch Generate from Jira Folder                        ║");
+    console.log("║     ASSIGNEE-ONLY GENERATION PIPELINE                     ║");
+    console.log("║     Generate Test Cases by Assignee + Execution Status    ║");
     console.log("╚════════════════════════════════════════════════════════════╝\n");
 
-    // Validate folder name (REQUIRED)
-    if (!JIRA_FOLDER_NAME) {
-      console.error("❌ ERROR: JIRA_FOLDER_NAME is not set in .env file");
-      console.log("\n💡 Please add to .env:");
-      console.log("   JIRA_FOLDER_NAME=CASA - Android");
-      console.log("\n💡 TIP: To generate by assignee only, use:");
-      console.log("   npm run generate-assignee");
+    // Validate assignee (REQUIRED)
+    if (!JIRA_ASSIGNEE) {
+      console.error("❌ ERROR: JIRA_ASSIGNEE is not set in .env file");
+      console.log("\n💡 JIRA_ASSIGNEE is REQUIRED!");
+      console.log("   Please add to .env:");
+      console.log("   JIRA_ASSIGNEE=your.username");
+      console.log("\n📝 How to find your JIRA username:");
+      console.log("   1. Login to JIRA");
+      console.log("   2. Click your avatar → Profile");
+      console.log("   3. Check username in URL or profile page");
+      console.log("   4. Format: firstname.lastname or Firstname.Lastname");
       process.exit(1);
     }
 
-    console.log(`📁 Target Folder: ${JIRA_FOLDER_NAME}`);
-    console.log(`👤 Assignee Filter: NONE (all assignees)\n`);
+    console.log(`👤 Assignee: ${JIRA_ASSIGNEE}`);
+    console.log(`📊 Execution Status: ${JIRA_EXECUTION_STATUS}`);
+    console.log(`📁 Scope: ALL (no folder, version, or cycle filter)\n`);
 
-    // ========== STEP 1: Fetch All Test Cases from Folder ==========
-    console.log("📋 STEP 1: Fetching all test cases from Jira folder...");
+    // ========== STEP 1: Fetch All Test Cases by Assignee ==========
+    console.log("📋 STEP 1: Fetching all test cases assigned to you...");
     console.log("─".repeat(60));
-    const allTestCases = await getAllByFolderWithPagination(authHeader);
+    const allTestCases = await getAllByAssigneeWithPagination(authHeader);
     
     if (allTestCases.length === 0) {
-      console.error(`❌ No test cases found in folder: ${JIRA_FOLDER_NAME}`);
+      console.error(`❌ No test cases found for assignee: ${JIRA_ASSIGNEE}`);
       console.log("\n💡 Please check:");
-      console.log("   1. Folder name is correct");
-      console.log("   2. Folder has test cases");
+      console.log("   1. Assignee username is correct");
+      console.log("   2. You have test cases assigned to you");
       console.log("   3. Version and Cycle are correct");
       console.log("   4. Jira credentials are correct");
       process.exit(1);
     }
     
-    console.log(`✅ Found ${allTestCases.length} test cases from folder\n`);
+    console.log(`✅ Found ${allTestCases.length} test cases assigned to ${JIRA_ASSIGNEE}\n`);
 
     // ========== STEP 2: Group Test Cases by Label ==========
     console.log("🔄 STEP 2: Grouping test cases by label...");
@@ -85,15 +97,15 @@ async function runFolderGeneration() {
     console.log("🎯 STEP 3: Generating Test Scenarios (TS Level)...");
     console.log("─".repeat(60));
     
-    // Determine output directories based on OUTPUT_FOLDER env variable
-    const baseOutputDir = OUTPUT_FOLDER ? `./${OUTPUT_FOLDER}` : ".";
+    // Determine output directories based on OUTPUT_FOLDER_ASSIGNEE env variable
+    const baseOutputDir = OUTPUT_FOLDER_ASSIGNEE ? `./${OUTPUT_FOLDER_ASSIGNEE}` : "./assignee-output";
     const tsOutputDir = `${baseOutputDir}/yml-ts`;
     const tcOutputDir = `${baseOutputDir}/yml-tc`;
     
-    // Create base output directory if custom folder is specified
-    if (OUTPUT_FOLDER && !fs.existsSync(baseOutputDir)) {
+    // Create base output directory
+    if (!fs.existsSync(baseOutputDir)) {
       fs.mkdirSync(baseOutputDir, { recursive: true });
-      console.log(`📁 Created custom output directory: ${baseOutputDir}`);
+      console.log(`📁 Created output directory: ${baseOutputDir}`);
     }
     
     // Create output directory for Test Scenarios
@@ -114,7 +126,7 @@ async function runFolderGeneration() {
         appId: "${APP_ID}",
         jsEngine: "graaljs",
         tags: ["regression"],
-        jiraFolderName: JIRA_FOLDER_NAME,
+        jiraFolderName: "ALL_FOLDERS",
         tcFilePathAndroid: "../../../components/android/",
         tcFilePathIOS: "../../../components/ios/",
         segment: {
@@ -145,10 +157,9 @@ async function runFolderGeneration() {
     console.log("╔════════════════════════════════════════════════════════════╗");
     console.log("║                    ✨ GENERATION COMPLETE ✨                ║");
     console.log("╚════════════════════════════════════════════════════════════╝");
-    console.log(`\n📦 Generated Files from folder: ${JIRA_FOLDER_NAME}`);
-    if (OUTPUT_FOLDER) {
-      console.log(`📁 Custom Output Directory: ${baseOutputDir}/`);
-    }
+    console.log(`\n📦 Generated Files for assignee: ${JIRA_ASSIGNEE}`);
+    console.log(`📁 Output Directory: ${baseOutputDir}/`);
+    console.log(`📁 Scope: ALL FOLDERS (no folder filter)`);
     console.log(`\n📁 Test Scenarios (${tsOutputDir}/):`);
     sortedLabels.forEach((label, index) => {
       console.log(`   ${(index + 1).toString().padStart(2, "0")}. ${label}.yml`);
@@ -156,10 +167,10 @@ async function runFolderGeneration() {
     console.log(`\n📁 Test Cases (${tcOutputDir}/):`);
     console.log(`   Total: ${stats.totalTestCases} TC files`);
     console.log("\n📊 Summary:");
-    console.log(`   Folder: ${JIRA_FOLDER_NAME}`);
-    if (OUTPUT_FOLDER) {
-      console.log(`   Output Directory: ${baseOutputDir}/`);
-    }
+    console.log(`   Assignee: ${JIRA_ASSIGNEE}`);
+    console.log(`   Execution Status: ${JIRA_EXECUTION_STATUS}`);
+    console.log(`   Scope: ALL (no version/cycle/folder filter)`);
+    console.log(`   Output Directory: ${baseOutputDir}/`);
     console.log(`   Test Scenarios: ${stats.totalLabels} files`);
     console.log(`   Test Cases: ${stats.totalTestCases} files`);
     console.log("\n🎉 All files are ready for automation!");
@@ -171,4 +182,4 @@ async function runFolderGeneration() {
   }
 }
 
-runFolderGeneration();
+runAssigneeGeneration();

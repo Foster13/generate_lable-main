@@ -7,8 +7,8 @@ env:
   JIRA_FOLDER_NAME: CASA
 
 onFlowStart:
-  - runScript:
-      file: ../../../automation-env.js
+  - runScript: ../../../automation-env.js
+  - runScript: ../../../components/pojk/pojk-casa/Android/home.js
 ---
 #=============================================================================== Android
 - runFlow:

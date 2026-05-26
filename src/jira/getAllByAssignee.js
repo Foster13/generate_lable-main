@@ -1,34 +1,35 @@
 import axios from "axios";
 import {
   JIRA_BASE_URL,
-  JIRA_VERSION_NAME,
-  JIRA_CYCLE_NAME,
-  JIRA_FOLDER_NAME,
-  JIRA_ASSIGNEE
+  JIRA_ASSIGNEE,
+  JIRA_EXECUTION_STATUS
 } from "../utils/constans.js";
 
 /**
- * Get all test cases from Jira by folder name only (NO assignee filter)
+ * Get all test cases from Jira by assignee only (NO folder filter)
+ * With execution status filter (default: UNEXECUTED)
  * 
  * @param {string} authHeader - Jira authorization header
  * @returns {Array} - Array of test executions
  */
-export async function getAllByFolder(authHeader) {
+export async function getAllByAssignee(authHeader) {
   const version = encodeURIComponent(JIRA_VERSION_NAME);
   const cycle = encodeURIComponent(JIRA_CYCLE_NAME);
-  const folder = encodeURIComponent(JIRA_FOLDER_NAME);
+  const assignee = encodeURIComponent(JIRA_ASSIGNEE);
+  const executionStatus = encodeURIComponent(JIRA_EXECUTION_STATUS);
 
   // Always start from offset 0 (first page)
   const offset = 0;
 
-  // Build query with folder filter ONLY (no assignee filter)
-  const zqlQuery = `fixVersion = "${version}" AND cycleName in ("${cycle}") AND folderName in ("${folder}")`;
+  // Build query with assignee AND executionStatus filter (no folder filter)
+  const zqlQuery = `fixVersion = "${version}" AND cycleName in ("${cycle}") AND assignee = "${assignee}" AND executionStatus = "${executionStatus}"`;
 
   const url = `${JIRA_BASE_URL}/rest/zapi/latest/zql/executeSearch?zqlQuery=${encodeURIComponent(zqlQuery)}&view=list&searchType=advance&offset=${offset}&maxRecords=20`;
   
   console.log("🔗 JIRA URL:", url);
-  console.log(`📁 Folder filter: ${JIRA_FOLDER_NAME}`);
-  console.log(`👤 Assignee filter: NONE (all assignees)`);
+  console.log(`🔍 Filtering by assignee: ${JIRA_ASSIGNEE}`);
+  console.log(`📊 Execution status: ${JIRA_EXECUTION_STATUS}`);
+  console.log(`📁 Folder filter: NONE (fetching from ALL folders)`);
 
   try {
     const res = await axios.get(url, {
@@ -46,31 +47,35 @@ export async function getAllByFolder(authHeader) {
 }
 
 /**
- * Get all test cases with pagination support
- * Fetch multiple pages if needed (NO assignee filter)
+ * Get all test cases by assignee with pagination support
+ * Fetch multiple pages if needed (NO folder, version, or cycle filter)
+ * With execution status filter (default: UNEXECUTED)
  * 
  * @param {string} authHeader - Jira authorization header
  * @param {number} maxPages - Maximum pages to fetch (default: 10)
  * @returns {Array} - Array of all test executions
  */
-export async function getAllByFolderWithPagination(authHeader, maxPages = 10) {
-  const version = JIRA_VERSION_NAME;
-  const cycle = JIRA_CYCLE_NAME;
-  const folder = JIRA_FOLDER_NAME;
+export async function getAllByAssigneeWithPagination(authHeader, maxPages = 10) {
+  const assignee = JIRA_ASSIGNEE;
+  const executionStatus = JIRA_EXECUTION_STATUS;
 
   let allExecutions = [];
   let currentPage = 0;
   let hasMore = true;
 
   console.log("📥 Fetching test cases with pagination...");
-  console.log(`📁 Folder filter: ${JIRA_FOLDER_NAME}`);
-  console.log(`👤 Assignee filter: NONE (all assignees)`);
+  console.log(`🔍 Filtering by assignee: ${JIRA_ASSIGNEE}`);
+  console.log(`📊 Execution status: ${JIRA_EXECUTION_STATUS}`);
+  console.log(`📁 Folder filter: NONE`);
+  console.log(`📦 Version filter: NONE`);
+  console.log(`🔄 Cycle filter: NONE`);
 
   while (hasMore && currentPage < maxPages) {
     const offset = currentPage * 20;
     
-    // Build query with folder filter ONLY (no assignee filter)
-    const zqlQuery = `fixVersion = "${version}" AND cycleName in ("${cycle}") AND folderName in ("${folder}")`;
+    // Build query with assignee AND executionStatus filter ONLY
+    // NO version, cycle, or folder filter
+    const zqlQuery = `assignee = "${assignee}" AND executionStatus = "${executionStatus}"`;
 
     const url = `${JIRA_BASE_URL}/rest/zapi/latest/zql/executeSearch?zqlQuery=${encodeURIComponent(zqlQuery)}&view=list&searchType=advance&offset=${offset}&maxRecords=20`;
 
