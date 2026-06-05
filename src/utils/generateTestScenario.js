@@ -51,6 +51,13 @@ export function generateTestScenario(items, options = {}) {
     }
   });
 
+  // Sort uniqueItems berdasarkan issueSummary secara ascending (001, 002, 003, ...)
+  uniqueItems.sort((a, b) => {
+    const summaryA = a.issueSummary?.trim() || "";
+    const summaryB = b.issueSummary?.trim() || "";
+    return summaryA.localeCompare(summaryB, undefined, { numeric: true, sensitivity: 'base' });
+  });
+
   // ========== ANDROID SECTION ==========
   output += `#=============================================================================== Android\n`;
 
