@@ -23,19 +23,19 @@ export function generateTestScenario(items, options = {}) {
   output += `appId: ${appId}\n`;
   output += `jsEngine: ${jsEngine}\n\n`;
 
-  // Tags - sesuai template: acceptence test
-  output += `tags:\n`;
-  output += `  - acceptence test\n`;
-
-  // Environment variables - sesuai template: CASA (tanpa " - Android")
+  // Environment variables dengan version, cycle, dan folder name
   output += `env:\n`;
-  output += `  JIRA_FOLDER_NAME: CASA\n`;
+  output += `  JIRA_VERSION_NAME: Regression R5.2\n`;
+  output += `  JIRA_CYCLE_NAME: Feature R5\n`;
+  output += `  JIRA_FOLDER_NAME: Branch Reservasi\n`;
   output += `\n`;
 
-  // ========== ON FLOW START ========== (hanya 1 script sesuai template)
+  // ========== ON FLOW START ========== (2 scripts sesuai requirement)
   output += `onFlowStart:\n`;
   output += `  - runScript:\n`;
-  output += `      file: ../../../automation-env.js\n`;
+  output += `      file: ../../automation-env.js\n`;
+  output += `  - runScript:\n`;
+  output += `      file: ../../components/branch-intelligent/Android/branch_intelligent_reservation.js\n`;
 
   output += `---\n`;
 
@@ -74,7 +74,7 @@ export function generateTestScenario(items, options = {}) {
 
     output += `- runFlow:\n`;
     output += `    label: ${label}\n`; // Diisi dengan summary
-    output += `    file: ../../../components/pojk/pojk-casa/Android/${tcNumber}.yml\n`; // Path sesuai template
+    output += `    file: ../../components/branch-intelligent/Android/${tcNumber}.yml\n`; // Path ke branch-intelligent
     output += `    env:\n`;
     output += `      PLATFORM: Android\n`; // Sesuai template
     output += `      JIRA_ISSUE: ${issueKey}\n`; // Diisi dengan issue key
@@ -94,7 +94,7 @@ export function generateTestScenario(items, options = {}) {
 
     output += `- runFlow:\n`;
     output += `    label: ${label}\n`;
-    output += `    file: ../../../components/pojk/pojk-casa/iOS/${tcNumber}.yml\n`; // Path sesuai template (iOS bukan ios)
+    output += `    file: ../../components/branch-intelligent/iOS/${tcNumber}.yml\n`; // Path ke branch-intelligent iOS
     output += `    env:\n`;
     output += `      PLATFORM: iOS\n`; // Sesuai template
     output += `      JIRA_ISSUE: ${issueKey}\n`;
